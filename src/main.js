@@ -56,7 +56,7 @@ export default class Main extends Component {
       const intent = false;
       const response = firebase.database().ref(`${this.state.directory}`);
       const directory = response.path.pieces_.join('/');
-      // console.log('dir:', directory)
+      console.log(this.state.input)
       let currentPath = false;
       let currentPathIndex = 0;
 
@@ -67,25 +67,30 @@ export default class Main extends Component {
 
         paths.forEach((element, index) => {
           console.log('loop', element)
+          let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas'];
+          let yesOptions = ['yes', 'ya', 'yah', 'yeah', 'ye', 'ok', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing']
+
           if (!element.intent) {
             currentPathIndex = index;
             currentPath = element;
             return element;
-          } else if (this.state.input === 'no') {
-            let currentPath = paths[1];
+
+          } else if (noOptions.includes(this.state.input.toLowerCase()) && element.intent === 'no') {
+            let currentPath = element;
             this.setState({
               ...this.state,
               input: false,
               dialogue: currentPath.message,
-            })
-          } else if (this.state.input === 'yes') {
-            let currentPath = paths[0];
+            });
+
+          } else if (yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
+            let currentPath = element;
             this.setState({
               ...this.state,
               input: false,
               dialogue: currentPath.message
-            })
-          }
+            });
+          };
         });
 
         if (currentPath) {
@@ -94,7 +99,7 @@ export default class Main extends Component {
             msg = msg.split('%%');
             msg[1] = this.state.input;
             msg.join();
-          }
+          };
           this.setState({
             ...this.state,
             input: false,
@@ -102,13 +107,8 @@ export default class Main extends Component {
             directory: `${directory}/paths/${currentPathIndex}`,
             currentPaths: value
           });
-
-        }
-
-        // console.log('Current Path:', currentPath);
-
-
-      })
+        };
+      });
 
       // msg.on("value", (result) => {
       //   // let value = result.val().split('%%')
@@ -132,8 +132,8 @@ export default class Main extends Component {
         ...this.state,
         dialogue: result.val()
       });
-    })
-  }
+    });
+  };
 
   render() {
 
