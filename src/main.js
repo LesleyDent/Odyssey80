@@ -56,14 +56,14 @@ export default class Main extends Component {
       const intent = false;
       const response = firebase.database().ref(`${this.state.directory}`);
       const directory = response.path.pieces_.join('/');
-      console.log('dir:', directory)
+      // console.log('dir:', directory)
       let currentPath = false;
       let currentPathIndex = 0;
 
       response.on("value", (result) => {
         let value = result.val();
         const paths = value.paths
-        console.log(response);
+        // console.log(response);
 
         paths.forEach((element, index) => {
           console.log('loop', element)
@@ -71,13 +71,21 @@ export default class Main extends Component {
             currentPathIndex = index;
             currentPath = element;
             return element;
-          } else if (element.intent === 'yes') {
-            console.log('INTENT', element.intent)
-            // return element.message
+          } else if (this.state.input === 'no') {
+            let currentPath = paths[1];
+            this.setState({
+              ...this.state,
+              input: false,
+              dialogue: currentPath.message,
+            })
+          } else if (this.state.input === 'yes') {
+            let currentPath = paths[0];
+            this.setState({
+              ...this.state,
+              input: false,
+              dialogue: currentPath.message
+            })
           }
-          console.log('intent found', element.message);
-          // compare against each intent to determine chosenPath
-
         });
 
         if (currentPath) {
@@ -97,7 +105,7 @@ export default class Main extends Component {
 
         }
 
-        console.log('Current Path:', currentPath);
+        // console.log('Current Path:', currentPath);
 
 
       })
