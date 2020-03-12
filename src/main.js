@@ -22,8 +22,10 @@ export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dialogue: 'hey',
-      input: false
+      dialogue: '',
+      input: false,
+      directory: 'dialogue/greeting',
+      currentPaths: false,
     };
   };
 
@@ -43,25 +45,80 @@ export default class Main extends Component {
 
   submitInput = (event) => {
     event.preventDefault();
-    if (this.state.input) {
+    // get userinput  DONE
+    // TODO: determine intent w dictionary thing
+    // get current paths FRAGILE?
+    // TODO: load path that matches intent
+    // IN PROGRESS: display message
+    // TODO: if path is a ref, load ref
 
-      const dbRef = firebase.database().ref(`dialogue/response1`);
-      dbRef.on("value", (result) => {
-        let value = result.val().split('%%')
-        value[1] = this.state.input
-        value.join()
-        console.log(value);
-        this.setState({
-          ...this.state,
-          input: false,
-          dialogue: value
+    if (this.state.input) {
+      const intent = false;
+      const response = firebase.database().ref(`${this.state.directory}`);
+      const directory = response.path.pieces_.join('/');
+      console.log('dir:', directory)
+      let currentPath = false;
+      let currentPathIndex = 0;
+
+      response.on("value", (result) => {
+        let value = result.val();
+        const paths = value.paths
+        console.log(response);
+
+        paths.forEach((element, index) => {
+          console.log('loop', element)
+          if (!element.intent) {
+            currentPathIndex = index;
+            currentPath = element;
+            return element;
+          } else if (element.intent === 'yes') {
+            console.log('INTENT', element.intent)
+            // return element.message
+          }
+          console.log('intent found', element.message);
+          // compare against each intent to determine chosenPath
+
         });
+
+        if (currentPath) {
+          let msg = currentPath.message;
+          if (msg.indexOf('%%') > -1) {
+            msg = msg.split('%%');
+            msg[1] = this.state.input;
+            msg.join();
+          }
+          this.setState({
+            ...this.state,
+            input: false,
+            dialogue: msg,
+            directory: `${directory}/paths/${currentPathIndex}`,
+            currentPaths: value
+          });
+
+        }
+
+        console.log('Current Path:', currentPath);
+
+
       })
+
+      // msg.on("value", (result) => {
+      //   // let value = result.val().split('%%')
+      //   // value[1] = this.state.input
+      //   // value.join()
+      //   console.log(result.val());
+      //   this.setState({
+      //     ...this.state,
+      //     input: false,
+      //     dialogue: result.val(),
+      //     // directory: this.state.directory
+      //   });
+      // })
     };
   };
 
   componentDidMount() {
-    const dbRef = firebase.database().ref(`dialogue/greeting/message`);
+    const dbRef = firebase.database().ref(`${this.state.directory}/message`);
     dbRef.on("value", (result) => {
       this.setState({
         ...this.state,

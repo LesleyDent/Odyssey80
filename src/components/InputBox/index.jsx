@@ -1,4 +1,5 @@
 import React from 'react';
+import './styles.scss';
 
 function InputBox(props) {
   return (
@@ -12,7 +13,7 @@ function InputBox(props) {
         onChange={(event) => { props.handleChange(event) }}
         autoComplete="off"
       />
-      <button
+      <button className="input-box__button"
         type="submit"
         disabled={!props.input}
       >

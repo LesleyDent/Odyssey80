@@ -56,7 +56,7 @@ p {
 input, button {
   appearance: none;
   font-size: 2rem;
-  border: 2px solid red;
+  border: 2px solid rgb(255, 0, 242);
   border-radius: 5px;
   margin: 10px;
   padding: 10px 20px;
