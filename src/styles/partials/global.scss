@@ -1,0 +1,35 @@
+// @font-face {
+//   font-family: "Quantico";
+//   src: url('../../assets/Quantico/Quantico-Regular.ttf') format(".otf");
+// }
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: Quantico;
+  }
+
+html, body {
+  font-size: .7rem;
+}
+
+p {
+  margin-top: 0;
+  color: white;
+}
+
+input, button {
+  appearance: none;
+  width: 530px;
+  font-size: 2rem;
+  border: 2px solid #FC0089;
+  // box-shadow: inset 0 0 10px #ff00f2, 0 0 10px #ff00f2;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 5px 20px;
+  outline: none;
+  color: white;
+  background-color: black;
+}

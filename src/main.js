@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import InputBox from './components/InputBox';
 import OutputBox from './components/OutputBox';
 import firebase from 'firebase';
+import './main.scss'
+import './styles/partials/global.scss'
 // // Initialize Firebase
 var firebaseConfig = {
   apiKey: "AIzaSyDvfM-1FFXlINCwrD7s-yxIvS3kGlVug-8",
@@ -15,7 +17,6 @@ var firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-console.log(firebase.app().name);
 firebase.database();
 
 export default class Main extends Component {
@@ -24,10 +25,32 @@ export default class Main extends Component {
     this.state = {
       dialogue: '',
       input: false,
+      currentMemory: false,
+      memory: {},
       directory: 'dialogue/greeting',
       currentPaths: false,
     };
   };
+
+  typeEffect = (element) => {
+    console.log(element)
+    let speed = 75;
+    let text = element.innerHTML;
+    element.innerHTML = "";
+
+    let i = 0;
+    let timer = setInterval(() => {
+      if (i < text.length) {
+        element.append(text.charAt(i));
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, speed);
+  }
+
+
+
 
   handleInputChange = (inputValue) => {
     this.setState({
@@ -45,30 +68,31 @@ export default class Main extends Component {
 
   submitInput = (event) => {
     event.preventDefault();
-    // get userinput  DONE
-    // TODO: determine intent w dictionary thing
-    // get current paths FRAGILE?
-    // TODO: load path that matches intent
-    // IN PROGRESS: display message
-    // TODO: if path is a ref, load ref
+    // DONE:
+    // get userinput
+    // load path that matches intent
+    // determine intent w dictionary thing
+    // display message
+    // FRAGILE: get current paths
+    // FRAGILE: if path is a ref, load ref
+    // TODO: create HELP and other random option responses
+    // DONE: remember elements
 
     if (this.state.input) {
       const intent = false;
       const response = firebase.database().ref(`${this.state.directory}`);
       const directory = response.path.pieces_.join('/');
-      console.log(this.state.input)
       let currentPath = false;
       let currentPathIndex = 0;
 
       response.on("value", (result) => {
         let value = result.val();
         const paths = value.paths
-        // console.log(response);
 
         paths.forEach((element, index) => {
           console.log('loop', element)
-          let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas'];
-          let yesOptions = ['yes', 'ya', 'yah', 'yeah', 'ye', 'ok', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing']
+          let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no'];
+          let yesOptions = ['yes', 'ya', 'yah', 'yeah', 'ye', 'ok', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes']
 
           if (!element.intent) {
             currentPathIndex = index;
@@ -76,20 +100,11 @@ export default class Main extends Component {
             return element;
 
           } else if (noOptions.includes(this.state.input.toLowerCase()) && element.intent === 'no') {
-            let currentPath = element;
-            this.setState({
-              ...this.state,
-              input: false,
-              dialogue: currentPath.message,
-            });
+            currentPath = element;
 
           } else if (yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
-            let currentPath = element;
-            this.setState({
-              ...this.state,
-              input: false,
-              dialogue: currentPath.message
-            });
+            currentPath = element;
+
           };
         });
 
@@ -100,37 +115,47 @@ export default class Main extends Component {
             msg[1] = this.state.input;
             msg.join();
           };
-          this.setState({
-            ...this.state,
-            input: false,
-            dialogue: msg,
-            directory: `${directory}/paths/${currentPathIndex}`,
-            currentPaths: value
-          });
+
+          if (this.state.currentMemory) {
+            console.log({ [this.state.currentMemory]: this.state.input })
+            this.setState(prevState => ({
+              ...this.state,
+              dialogue: msg,
+              directory: `${directory}/paths/${currentPathIndex}`,
+              currentPaths: value,
+              input: false,
+              memory: {
+                ...this.state.memory,
+                [this.state.currentMemory]: prevState.input
+              },
+              currentMemory: false
+            }))
+          } else {
+            this.setState({
+              ...this.state,
+              input: false,
+              dialogue: msg,
+              directory: `${directory}/paths/${currentPathIndex}`,
+              currentPaths: value
+            });
+          }
         };
       });
-
-      // msg.on("value", (result) => {
-      //   // let value = result.val().split('%%')
-      //   // value[1] = this.state.input
-      //   // value.join()
-      //   console.log(result.val());
-      //   this.setState({
-      //     ...this.state,
-      //     input: false,
-      //     dialogue: result.val(),
-      //     // directory: this.state.directory
-      //   });
-      // })
     };
   };
 
   componentDidMount() {
-    const dbRef = firebase.database().ref(`${this.state.directory}/message`);
+    const dbRef = firebase.database().ref(this.state.directory);
     dbRef.on("value", (result) => {
+      console.log(result.val())
+      const storeResult = result.val()
       this.setState({
         ...this.state,
-        dialogue: result.val()
+        dialogue: storeResult.message,
+        currentMemory: storeResult.remember,
+        memory: {
+          ...this.state.memory,
+        }
       });
     });
   };
@@ -140,9 +165,10 @@ export default class Main extends Component {
     return (
       <div className="main">
         <div className="main__container">
-          <OutputBox dialogue={this.state.dialogue} />
+          <OutputBox onChange={this.typeEffect} dialogue={this.state.dialogue} />
           <InputBox input={this.state.input} handleChange={this.handleChange} submitInput={this.submitInput} />
         </div>
+        <div className="main__border-bottom"></div>
       </div>
     );
   };
