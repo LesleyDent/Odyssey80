@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './styles.scss';
 
-function OutputBox(props) {
-  return (
-    <div className="output-box">
-      <p
-        onChange={(event) => { props.typeEffect(event.target) }}
-        className="output-box__dialogue">{props.dialogue}</p>
-    </div>
-  );
+export default class OutputBox extends Component {
+  constructor(props) {
+    super(props)
+  }
+  // this.props.typeEffect(this.props.dialogue)
+  render() {
+    return (
+      <div className="output-box">
+        <p id="output" className="output-box__dialogue">{this.props.dialogue}</p>
+      </div>
+    );
+  }
 }
-export default OutputBox

@@ -32,25 +32,24 @@ export default class Main extends Component {
     };
   };
 
-  typeEffect = (element) => {
-    console.log(element)
-    let speed = 75;
-    let text = element.innerHTML;
-    element.innerHTML = "";
+  typeEffect = (text) => {
+    if (this.state.outputEl) {
+      const element = document.querySelector('#output');
+      console.log("TEXT EFFECT", element)
+      let speed = 75;
+      element.textContent = "";
 
-    let i = 0;
-    let timer = setInterval(() => {
-      if (i < text.length) {
-        element.append(text.charAt(i));
-        i++;
-      } else {
-        clearInterval(timer);
-      }
-    }, speed);
+      let i = 0;
+      let timer = setInterval(() => {
+        if (i < text.length) {
+          this.state.outputEl.append(text.charAt(i));
+          i++;
+        } else {
+          clearInterval(timer);
+        }
+      }, speed);
+    }
   }
-
-
-
 
   handleInputChange = (inputValue) => {
     this.setState({
@@ -68,89 +67,117 @@ export default class Main extends Component {
 
   submitInput = (event) => {
     event.preventDefault();
-    // DONE:
-    // get userinput
-    // load path that matches intent
-    // determine intent w dictionary thing
-    // display message
-    // FRAGILE: get current paths
-    // FRAGILE: if path is a ref, load ref
+    // display intro message
+    // TODO: if path is a ref, load ref
     // TODO: create HELP and other random option responses
-    // DONE: remember elements
-
     if (this.state.input) {
-      const intent = false;
-      const response = firebase.database().ref(`${this.state.directory}`);
-      const directory = response.path.pieces_.join('/');
-      let currentPath = false;
-      let currentPathIndex = 0;
+      const data = this.getFirebaseData();
+      this.updateGame(data);
+    }
+  };
 
-      response.on("value", (result) => {
-        let value = result.val();
-        const paths = value.paths
+  getFirebaseData = (directory) => {
+    const firebaseData = firebase.database().ref(directory || this.state.directory);
+    return firebaseData;
+  }
 
-        paths.forEach((element, index) => {
-          console.log('loop', element)
-          let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no'];
-          let yesOptions = ['yes', 'ya', 'yah', 'yeah', 'ye', 'ok', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes']
+  parseMessage = (message) => {
+    if (message.indexOf('%%') > -1) {
+      let messageArray = message.split('%%');
+      messageArray[1] = this.state.input;
+      return messageArray.join('');
+    };
+    return message;
+  }
 
-          if (!element.intent) {
-            currentPathIndex = index;
+  updateGame = (firebaseData) => {
+    const response = firebaseData;
+    const directory = response.path.pieces_.join('/');
+    let currentPath = false;
+    let currentPathIndex = 0;
+
+    response.on("value", (result) => {
+      let value = result.val();
+      const paths = value.paths
+
+      paths.forEach((element, index) => {
+        let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no'];
+        let yesOptions = ['yes', 'ya', 'yah', 'yeah', 'ye', 'ok', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes']
+        let correctOptions = ['34', 'thirty four', 'thirty-four', 'thirtyfour'];
+
+        if (!element.intent) {
+          currentPathIndex = index;
+          currentPath = element;
+        } else {
+          if (element.intent === 'intro') {
             currentPath = element;
-            return element;
-
           } else if (noOptions.includes(this.state.input.toLowerCase()) && element.intent === 'no') {
             currentPath = element;
-
           } else if (yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
             currentPath = element;
-
-          };
-        });
-
-        if (currentPath) {
-          let msg = currentPath.message;
-          if (msg.indexOf('%%') > -1) {
-            msg = msg.split('%%');
-            msg[1] = this.state.input;
-            msg.join();
-          };
-
-          if (this.state.currentMemory) {
-            console.log({ [this.state.currentMemory]: this.state.input })
-            this.setState(prevState => ({
-              ...this.state,
-              dialogue: msg,
-              directory: `${directory}/paths/${currentPathIndex}`,
-              currentPaths: value,
-              input: false,
-              memory: {
-                ...this.state.memory,
-                [this.state.currentMemory]: prevState.input
-              },
-              currentMemory: false
-            }))
-          } else {
-            this.setState({
-              ...this.state,
-              input: false,
-              dialogue: msg,
-              directory: `${directory}/paths/${currentPathIndex}`,
-              currentPaths: value
-            });
+          } else if (correctOptions.includes(this.state.input.toLowerCase()) && element.intent === 'correct') {
+            currentPath = element
           }
         };
       });
-    };
-  };
+
+      // If a 'ref' exists, load firebase data and update 
+      if (currentPath && currentPath.ref) {
+        const refData = this.getFirebaseData(currentPath.ref);
+        refData.on("value", (result) => {
+          const refValue = result.val();
+          this.setState(prevState => ({
+            ...this.state,
+            dialogue: refValue.message,
+            directory: currentPath.ref,
+            currentPaths: value,
+            input: false,
+            memory: {
+              ...this.state.memory,
+              [this.state.currentMemory]: prevState.input
+            },
+            currentMemory: refValue.memory || false
+          }))
+        });
+      }
+      else if (currentPath && currentPath.message && !currentPath.ref) {
+        let msg = this.parseMessage(currentPath.message);
+
+        if (this.state.currentMemory) {
+          // console.log({ [this.state.currentMemory]: this.state.input })
+          this.setState(prevState => ({
+            ...this.state,
+            dialogue: msg,
+            directory: `${directory}/paths/${currentPathIndex}`,
+            currentPaths: value,
+            input: false,
+            memory: {
+              ...this.state.memory,
+              [this.state.currentMemory]: prevState.input
+            },
+            currentMemory: false
+          }))
+        } else {
+          this.setState({
+            ...this.state,
+            input: false,
+            dialogue: msg,
+            directory: `${directory}/paths/${currentPathIndex}`,
+            currentPaths: value
+          });
+        };
+      };
+    });
+  }
 
   componentDidMount() {
+
     const dbRef = firebase.database().ref(this.state.directory);
     dbRef.on("value", (result) => {
-      console.log(result.val())
       const storeResult = result.val()
       this.setState({
         ...this.state,
+        outputEl: document.querySelector('#output'),
         dialogue: storeResult.message,
         currentMemory: storeResult.remember,
         memory: {
@@ -165,7 +192,7 @@ export default class Main extends Component {
     return (
       <div className="main">
         <div className="main__container">
-          <OutputBox onChange={this.typeEffect} dialogue={this.state.dialogue} />
+          <OutputBox typeEffect={this.typeEffect} dialogue={this.state.dialogue} />
           <InputBox input={this.state.input} handleChange={this.handleChange} submitInput={this.submitInput} />
         </div>
         <div className="main__border-bottom"></div>
