@@ -1,4 +1,6 @@
-.input-box {
+.inputbox {
+  width: 530px;
+  transform: perspective(10em) rotateX(35deg);
   &__button {
     display: none;
   }

@@ -4,6 +4,7 @@ import OutputBox from './components/OutputBox';
 import firebase from 'firebase';
 import './main.scss'
 import './styles/partials/global.scss'
+import Options from './components/Options';
 // // Initialize Firebase
 var firebaseConfig = {
   apiKey: "AIzaSyDvfM-1FFXlINCwrD7s-yxIvS3kGlVug-8",
@@ -27,6 +28,7 @@ export default class Main extends Component {
       input: false,
       currentMemory: false,
       memory: {},
+      options: [],
       directory: 'dialogue/greeting',
       currentPaths: false,
     };
@@ -90,6 +92,26 @@ export default class Main extends Component {
     return message;
   }
 
+  onOptionClick = (index) => {
+    const data = this.getFirebaseData(`${this.state.directory}/paths/${index}`);
+    data.on("value", (result) => {
+      const refValue = result.val();
+      console.log('refv', refValue);
+      this.setState(prevState => ({
+        ...this.state,
+        dialogue: refValue.message,
+        directory: `${this.state.directory}/paths/${index}`,
+        input: false,
+        options: refValue.options || [],
+        memory: {
+          ...this.state.memory,
+          [this.state.currentMemory]: prevState.input
+        },
+        currentMemory: refValue.memory || false
+      }))
+    });
+  }
+
   updateGame = (firebaseData) => {
     const response = firebaseData;
     const directory = response.path.pieces_.join('/');
@@ -116,58 +138,76 @@ export default class Main extends Component {
           } else if (yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
             currentPath = element;
           } else if (correctOptions.includes(this.state.input.toLowerCase()) && element.intent === 'correct') {
-            currentPath = element
+            currentPath = element;
+          } else if (!correctOptions.includes(this.state.input.toLowerCase()) && element.intent === 'incorrect') {
+            currentPath = element;
+          } else if (this.state.input && element.intent === 'anything') {
+            currentPath = element;
+          } else if (this.state.input === 'maybe' && element.intent === 'maybe') {
+            //TODO Fix deep path issue
+            console.log('maybe')
+            currentPath = element;
           }
         };
+        if (element.options) {
+          console.log('options');
+          this.setState(() => ({
+            ...this.state,
+            memory: {
+              ...this.state.memory,
+            },
+            options: element.options
+          }))
+        }
       });
 
       // If a 'ref' exists, load firebase data and update 
       if (currentPath && currentPath.ref) {
-        const refData = this.getFirebaseData(currentPath.ref);
-        refData.on("value", (result) => {
-          const refValue = result.val();
-          this.setState(prevState => ({
-            ...this.state,
-            dialogue: refValue.message,
-            directory: currentPath.ref,
-            currentPaths: value,
-            input: false,
-            memory: {
-              ...this.state.memory,
-              [this.state.currentMemory]: prevState.input
-            },
-            currentMemory: refValue.memory || false
-          }))
-        });
-      }
-      else if (currentPath && currentPath.message && !currentPath.ref) {
-        let msg = this.parseMessage(currentPath.message);
+        this.loadfbRef(currentPath);
+      } else if (currentPath && currentPath.message && !currentPath.ref) {
+        this.loadfbPath(currentPath, currentPathIndex, directory);
 
-        if (this.state.currentMemory) {
-          // console.log({ [this.state.currentMemory]: this.state.input })
-          this.setState(prevState => ({
-            ...this.state,
-            dialogue: msg,
-            directory: `${directory}/paths/${currentPathIndex}`,
-            currentPaths: value,
-            input: false,
-            memory: {
-              ...this.state.memory,
-              [this.state.currentMemory]: prevState.input
-            },
-            currentMemory: false
-          }))
-        } else {
-          this.setState({
-            ...this.state,
-            input: false,
-            dialogue: msg,
-            directory: `${directory}/paths/${currentPathIndex}`,
-            currentPaths: value
-          });
-        };
       };
     });
+  }
+
+  loadfbRef = (currentPath) => {
+    const refData = this.getFirebaseData(currentPath.ref);
+    refData.on("value", (result) => {
+      const refValue = result.val();
+      this.setState(prevState => ({
+        ...this.state,
+        dialogue: refValue.message,
+        directory: currentPath.ref,
+        input: false,
+        options: refValue.options || [],
+        memory: {
+          ...this.state.memory,
+          [this.state.currentMemory]: prevState.input
+        },
+        currentMemory: refValue.memory || false
+      }))
+    });
+  }
+
+  loadfbPath = (currentPath, currentPathIndex, directory) => {
+    let msg = this.parseMessage(currentPath.message);
+
+    if (this.state.currentMemory) {
+      // console.log({ [this.state.currentMemory]: this.state.input })
+      this.setState(prevState => ({
+        ...this.state,
+        dialogue: msg,
+        directory: `${directory}/paths/${currentPathIndex}`,
+        input: false,
+        options: currentPath.options || [],
+        memory: {
+          ...this.state.memory,
+          [this.state.currentMemory]: prevState.input
+        },
+        currentMemory: false
+      }))
+    }
   }
 
   componentDidMount() {
@@ -194,6 +234,7 @@ export default class Main extends Component {
         <div className="main__container">
           <OutputBox typeEffect={this.typeEffect} dialogue={this.state.dialogue} />
           <InputBox input={this.state.input} handleChange={this.handleChange} submitInput={this.submitInput} />
+          <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
         <div className="main__border-bottom"></div>
       </div>
