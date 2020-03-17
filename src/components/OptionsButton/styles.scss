@@ -1,5 +1,7 @@
+@import '../../styles/partials/partials.scss';
+
 .options-button {
-  background-color: #FC0089;
+  background-color: $colorSecondary;
   color: black;
   font-size: 1.5rem;
   padding: 4px 10px;

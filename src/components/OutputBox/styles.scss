@@ -1,24 +1,26 @@
+@import '../../styles/partials/partials.scss';
+
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 20px #19CCF3, inset 0 0 100px rgba(25, 203, 243, 0.568);
+    box-shadow: 0 0 20px $colorPrimary, inset 0 0 100px rgba(25, 203, 243, 0.568);
   }
   15% {
-    box-shadow: 0 0 30px #19CCF3, inset 0 0 90px rgba(25, 203, 243, 0.568);
+    box-shadow: 0 0 30px $colorPrimary, inset 0 0 90px rgba(25, 203, 243, 0.568);
   }
 	30% {
-		box-shadow: 0 0 20px #19CCF3, inset 0 0 100px rgba(25, 203, 243, 0.568);
+		box-shadow: 0 0 20px $colorPrimary, inset 0 0 100px rgba(25, 203, 243, 0.568);
   }
   45% {
-		box-shadow: 0 0 30px #19CCF3, inset 0 0 110px rgba(25, 203, 243, 0.568);
+		box-shadow: 0 0 30px $colorPrimary, inset 0 0 110px rgba(25, 203, 243, 0.568);
   }
   60% {
-    box-shadow: 0 0 40px #19CCF3, inset 0 0 90px rgba(25, 203, 243, 0.568);
+    box-shadow: 0 0 40px $colorPrimary, inset 0 0 90px rgba(25, 203, 243, 0.568);
   }
   75% {
-    box-shadow: 0 0 20px #19CCF3, inset 0 0 100px rgba(25, 203, 243, 0.568);
+    box-shadow: 0 0 20px $colorPrimary, inset 0 0 100px rgba(25, 203, 243, 0.568);
   }
 	100% {
-		box-shadow: 0 0 30px #19CCF3, inset 0 0 90px rgba(25, 203, 243, 0.568);
+		box-shadow: 0 0 30px $colorPrimary, inset 0 0 90px rgba(25, 203, 243, 0.568);
   }
 }
 
@@ -92,8 +94,8 @@
   background-color: transparent;
 
   &.active {
-    border: 2px solid #19CCF3;
-    box-shadow: inset 0 0 30px #19CCF3, 0 0 30px #19CCF3;
+    border: 2px solid $colorPrimary;
+    box-shadow: inset 0 0 30px $colorPrimary, 0 0 30px $colorPrimary;
     animation: pulse 5s infinite, flicker 5s infinite;
   }
 
@@ -117,7 +119,7 @@
     border-top: 1px solid grey;
     padding: 10px;
     .active & {
-      border-top: 1px solid #19CCF3;
+      border-top: 1px solid $colorPrimary;
     }
   }
 
@@ -127,7 +129,7 @@
     border-radius: 50%;
     margin: 0 10px 0 0;
     padding: 0;
-    border-color: #19CCF3;
+    border-color: $colorPrimary;
 
     &--different {
       border-radius: 20%;

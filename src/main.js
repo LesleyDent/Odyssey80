@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import InputBox from './components/InputBox';
 import OutputBox from './components/OutputBox';
 import firebase from 'firebase';
-import './main.scss'
-import './styles/partials/global.scss'
+import './main.scss';
+import './styles/partials/partials.scss';
 import Options from './components/Options';
+import MatrixEffect from './components/MatrixEffect';
+import BkgMusic from './components/BackgroundMusic';
+import IntensifyMusic from './components/IntensifyMusic';
 // // Initialize Firebase
 var firebaseConfig = {
   apiKey: "AIzaSyDvfM-1FFXlINCwrD7s-yxIvS3kGlVug-8",
@@ -31,27 +34,31 @@ export default class Main extends Component {
       options: [],
       directory: 'dialogue/greeting',
       currentPaths: false,
+      cue: {
+        animation: false,
+        music: false
+      },
     };
   };
 
-  typeEffect = (text) => {
-    if (this.state.outputEl) {
-      const element = document.querySelector('#output');
-      console.log("TEXT EFFECT", element)
-      let speed = 75;
-      element.textContent = "";
+  // typeEffect = (text) => {
+  //   if (this.state.outputEl) {
+  //     const element = document.querySelector('#output');
+  //     console.log("TEXT EFFECT", element)
+  //     let speed = 75;
+  //     element.textContent = "";
 
-      let i = 0;
-      let timer = setInterval(() => {
-        if (i < text.length) {
-          this.state.outputEl.append(text.charAt(i));
-          i++;
-        } else {
-          clearInterval(timer);
-        }
-      }, speed);
-    }
-  }
+  //     let i = 0;
+  //     let timer = setInterval(() => {
+  //       if (i < text.length) {
+  //         this.state.outputEl.append(text.charAt(i));
+  //         i++;
+  //       } else {
+  //         clearInterval(timer);
+  //       }
+  //     }, speed);
+  //   }
+  // }
 
   handleInputChange = (inputValue) => {
     this.setState({
@@ -96,13 +103,16 @@ export default class Main extends Component {
     const data = this.getFirebaseData(`${this.state.directory}/paths/${index}`);
     data.on("value", (result) => {
       const refValue = result.val();
-      console.log('refv', refValue);
       this.setState(prevState => ({
         ...this.state,
         dialogue: refValue.message,
         directory: `${this.state.directory}/paths/${index}`,
         input: false,
         options: refValue.options || [],
+        cue: {
+          animation: refValue.cue && refValue.cue.animation ? refValue.cue.animation : false,
+          music: refValue.cue && refValue.cue.music ? refValue.cue.music : false
+        },
         memory: {
           ...this.state.memory,
           [this.state.currentMemory]: prevState.input
@@ -149,16 +159,6 @@ export default class Main extends Component {
             currentPath = element;
           }
         };
-        if (element.options) {
-          console.log('options');
-          this.setState(() => ({
-            ...this.state,
-            memory: {
-              ...this.state.memory,
-            },
-            options: element.options
-          }))
-        }
       });
 
       // If a 'ref' exists, load firebase data and update 
@@ -181,6 +181,10 @@ export default class Main extends Component {
         directory: currentPath.ref,
         input: false,
         options: refValue.options || [],
+        cue: {
+          animation: refValue.cue && refValue.cue.animation ? refValue.cue.animation : false,
+          music: refValue.cue && refValue.cue.music ? refValue.cue.music : false
+        },
         memory: {
           ...this.state.memory,
           [this.state.currentMemory]: prevState.input
@@ -201,6 +205,10 @@ export default class Main extends Component {
         directory: `${directory}/paths/${currentPathIndex}`,
         input: false,
         options: currentPath.options || [],
+        cue: {
+          animation: currentPath.cue && currentPath.cue.animation ? currentPath.cue.animation : false,
+          music: currentPath.cue && currentPath.cue.music ? currentPath.cue.music : false
+        },
         memory: {
           ...this.state.memory,
           [this.state.currentMemory]: prevState.input
@@ -236,6 +244,9 @@ export default class Main extends Component {
           <InputBox input={this.state.input} handleChange={this.handleChange} submitInput={this.submitInput} />
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
+        {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
+        {this.state.cue.music === 'synth' ? <BkgMusic /> : null}
+        {/* {this.state.cue.music === 'intensify' ? <IntensifyMusic /> : null} */}
         <div className="main__border-bottom"></div>
       </div>
     );
