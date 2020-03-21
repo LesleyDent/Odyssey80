@@ -8,6 +8,7 @@ import Options from './components/Options';
 import MatrixEffect from './components/MatrixEffect';
 import BkgMusic from './components/BackgroundMusic';
 import IntensifyMusic from './components/IntensifyMusic';
+import Cube from './components/Cube';
 // // Initialize Firebase
 var firebaseConfig = {
   apiKey: "AIzaSyDvfM-1FFXlINCwrD7s-yxIvS3kGlVug-8",
@@ -33,11 +34,12 @@ export default class Main extends Component {
       memory: {},
       options: [],
       directory: 'dialogue/greeting',
-      currentPaths: false,
+      // currentPaths: false,
       cue: {
         animation: false,
         music: false
       },
+      actions: {}
     };
   };
 
@@ -73,6 +75,8 @@ export default class Main extends Component {
       event.target.value
     );
   };
+  // how to get event.target.value without updating the value every time it inputs?
+  // compare things against prevstate and only render when they change?..
 
   submitInput = (event) => {
     event.preventDefault();
@@ -90,36 +94,20 @@ export default class Main extends Component {
     return firebaseData;
   }
 
-  parseMessage = (message) => {
+  parseMessage = () => {
+    let message = this.state.dialogue;
     if (message.indexOf('%%') > -1) {
       let messageArray = message.split('%%');
-      messageArray[1] = this.state.input;
+      let memory = messageArray[1].toLowerCase();
+      messageArray[1] = this.state.memory[memory];
       return messageArray.join('');
     };
     return message;
   }
 
   onOptionClick = (index) => {
-    const data = this.getFirebaseData(`${this.state.directory}/paths/${index}`);
-    data.on("value", (result) => {
-      const refValue = result.val();
-      this.setState(prevState => ({
-        ...this.state,
-        dialogue: refValue.message,
-        directory: `${this.state.directory}/paths/${index}`,
-        input: false,
-        options: refValue.options || [],
-        cue: {
-          animation: refValue.cue && refValue.cue.animation ? refValue.cue.animation : false,
-          music: refValue.cue && refValue.cue.music ? refValue.cue.music : false
-        },
-        memory: {
-          ...this.state.memory,
-          [this.state.currentMemory]: prevState.input
-        },
-        currentMemory: refValue.memory || false
-      }))
-    });
+    let data = this.getFirebaseData(`${this.state.directory}/paths/${index}`);
+    this.updateGame(data);
   }
 
   updateGame = (firebaseData) => {
@@ -130,96 +118,120 @@ export default class Main extends Component {
 
     response.on("value", (result) => {
       let value = result.val();
-      const paths = value.paths
+      const paths = value.paths ? value.paths : false;
 
-      paths.forEach((element, index) => {
-        let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no'];
-        let yesOptions = ['yes', 'ya', 'yah', 'yeah', 'ye', 'ok', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes']
-        let correctOptions = ['34', 'thirty four', 'thirty-four', 'thirtyfour'];
+      if (paths) {
+        paths.forEach((element, index) => {
+          let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no', 'no can do', 'nope', 'no chance', 'like hell'];
+          let yesOptions = ['yes', 'yep', 'yip', 'yup', 'sure thing', 'ya bud', 'ya', 'yah', 'yeah', 'ye', 'ok', 'k', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes', 'most definitely', 'k']
+          let comboOptions = ['2457', '2475', '2547', '2574', '2745', '2754', '4257', '4275', '4527', '4572', '4725', '4752', '5247', '5274', '5427', '5472', '5724', '5742', '7245', '7254', '7425', '7452', '7524', '7542'];
 
-        if (!element.intent) {
-          currentPathIndex = index;
-          currentPath = element;
-        } else {
-          if (element.intent === 'intro') {
+          if (!element.intent) {
+            currentPathIndex = index;
             currentPath = element;
-          } else if (noOptions.includes(this.state.input.toLowerCase()) && element.intent === 'no') {
-            currentPath = element;
-          } else if (yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
-            currentPath = element;
-          } else if (correctOptions.includes(this.state.input.toLowerCase()) && element.intent === 'correct') {
-            currentPath = element;
-          } else if (!correctOptions.includes(this.state.input.toLowerCase()) && element.intent === 'incorrect') {
-            currentPath = element;
-          } else if (this.state.input && element.intent === 'anything') {
-            currentPath = element;
-          } else if (this.state.input === 'maybe' && element.intent === 'maybe') {
-            //TODO Fix deep path issue
-            console.log('maybe')
-            currentPath = element;
+          } else {
+            if (element.intent === 'intro') {
+              currentPath = element;
+            } else if (noOptions.includes(this.state.input.toLowerCase()) && element.intent === 'no') {
+              currentPath = element;
+            } else if (yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
+              currentPath = element;
+            } else if (this.state.input.toLowerCase() === 'ready' && element.intent === 'yes') {
+              currentPath = element;
+            } else if (this.state.input === 'ok' && element.intent === 'correct') {
+              currentPath = element;
+            } else if (this.state.input !== 'ok' && element.intent === 'incorrect') {
+              currentPath = element;
+            } else if (this.state.input && element.intent === 'anything') {
+              currentPath = element;
+            } else if (comboOptions.includes(this.state.input.toLowerCase()) && element.intent === 'goodCombo') {
+              currentPath = element;
+            } else if (!comboOptions.includes(this.state.input.toLowerCase()) && element.intent === 'badCombo') {
+              currentPath = element;
+            } else if (element.intent === 'age') {
+              currentPath = element;
+            } else if (element.intent === 'eyeColor') {
+              currentPath = element;
+            } else if (element.intent === 'surname') {
+              currentPath = element;
+              console.log(currentPath)
+            } else if (this.state.input === 'maybe' && element.intent === 'maybe') {
+              //TODO Fix deep path issue
+              console.log('maybe')
+              currentPath = element;
+            }
+          };
+          if (element.actions) {
+            if (element.actions.updateTitle) {
+              document.title = element.actions.updateTitle
+            }
           }
-        };
-      });
+        });
+      } else if (value.ref) {
+        currentPath = value;
+      }
 
+      let randomMsg = false
+      if (currentPath.altmessage) {
+        let randomIndex = Math.floor(Math.random() * (currentPath.altmessage.length));
+        randomMsg = currentPath.altmessage[randomIndex]
+      }
       // If a 'ref' exists, load firebase data and update 
       if (currentPath && currentPath.ref) {
-        this.loadfbRef(currentPath);
+        this.loadfbRef(currentPath, randomMsg);
       } else if (currentPath && currentPath.message && !currentPath.ref) {
         this.loadfbPath(currentPath, currentPathIndex, directory);
-
       };
     });
   }
 
-  loadfbRef = (currentPath) => {
+  loadfbRef = (currentPath, randomMsg) => {
     const refData = this.getFirebaseData(currentPath.ref);
     refData.on("value", (result) => {
       const refValue = result.val();
       this.setState(prevState => ({
         ...this.state,
-        dialogue: refValue.message,
+        dialogue: randomMsg ? refValue[randomMsg] : refValue.message,
         directory: currentPath.ref,
         input: false,
         options: refValue.options || [],
         cue: {
-          animation: refValue.cue && refValue.cue.animation ? refValue.cue.animation : false,
-          music: refValue.cue && refValue.cue.music ? refValue.cue.music : false
+          animation: refValue.cue && refValue.cue.animation ? refValue.cue.animation : this.state.cue.animation,
+          music: refValue.cue && refValue.cue.music ? refValue.cue.music : this.state.cue.music
         },
         memory: {
           ...this.state.memory,
           [this.state.currentMemory]: prevState.input
         },
-        currentMemory: refValue.memory || false
+        currentMemory: refValue.remember || false,
+        actions: refValue.actions ? refValue.actions : {}
       }))
     });
   }
 
   loadfbPath = (currentPath, currentPathIndex, directory) => {
-    let msg = this.parseMessage(currentPath.message);
-
     if (this.state.currentMemory) {
-      // console.log({ [this.state.currentMemory]: this.state.input })
       this.setState(prevState => ({
         ...this.state,
-        dialogue: msg,
+        dialogue: currentPath.message,
         directory: `${directory}/paths/${currentPathIndex}`,
         input: false,
         options: currentPath.options || [],
         cue: {
-          animation: currentPath.cue && currentPath.cue.animation ? currentPath.cue.animation : false,
-          music: currentPath.cue && currentPath.cue.music ? currentPath.cue.music : false
+          animation: currentPath.cue && currentPath.cue.animation ? currentPath.cue.animation : this.state.cue.animation,
+          music: currentPath.cue && currentPath.cue.music ? currentPath.cue.music : this.state.cue.music
         },
         memory: {
           ...this.state.memory,
           [this.state.currentMemory]: prevState.input
         },
-        currentMemory: false
+        currentMemory: currentPath.remember || false,
+        actions: currentPath.actions ? currentPath.actions : {}
       }))
     }
   }
 
   componentDidMount() {
-
     const dbRef = firebase.database().ref(this.state.directory);
     dbRef.on("value", (result) => {
       const storeResult = result.val()
@@ -235,17 +247,26 @@ export default class Main extends Component {
     });
   };
 
+  componentDidUpdate() {
+    if (this.state.actions.updateTitle) {
+      document.title = this.state.actions.updateTitle
+    } else {
+      document.title = 'Odyssey80'
+    }
+  }
+
   render() {
 
     return (
       <div className="main">
         <div className="main__container">
-          <OutputBox typeEffect={this.typeEffect} dialogue={this.state.dialogue} />
+          <OutputBox typeEffect={this.typeEffect} dialogue={this.state.dialogue} parseMessage={this.parseMessage} />
           <InputBox input={this.state.input} handleChange={this.handleChange} submitInput={this.submitInput} />
+          {/* <Cube options={this.state.options} onOptionClick={this.onOptionClick} /> */}
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
         {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
-        {this.state.cue.music === 'synth' ? <BkgMusic /> : null}
+        {/* {this.state.cue.music === 'synth' ? <BkgMusic /> : null} */}
         {/* {this.state.cue.music === 'intensify' ? <IntensifyMusic /> : null} */}
         <div className="main__border-bottom"></div>
       </div>

@@ -1,0 +1,62 @@
+@import '../../styles/partials/partials.scss';
+
+.wrap {
+	perspective: 800px;
+	perspective-origin: 50% 100px;
+	display: flex;
+	position: absolute;
+	top: 530px;
+	left: 50px;
+}
+
+.cube {
+	display: flex;
+	position: relative;
+	width: 200px;
+  transform-style: preserve-3d;
+  font-family: Quantico;
+  color: white;
+  animation: spin 5s infinite linear;
+  text-align: center;
+}
+
+.cube div {
+  position: absolute;
+	width: 100px;
+	height: 100px;
+  box-shadow: 0 0 10px $colorPrimary, inset 0 0 40px rgba(25, 203, 243, 0.568);
+}
+
+.back {
+	transform: translateZ(-50px) rotateY(180deg);
+}
+.right {
+	transform: rotateY(-270deg) translateX(50px);
+	transform-origin: top right;
+}
+.left {
+	transform: rotateY(270deg) translateX(-50px);
+	transform-origin: center left;
+}
+.top {
+	transform: rotateX(-90deg) translateY(-50px);
+	transform-origin: top center;
+}
+.bottom {
+	transform: rotateX(90deg) translateY(50px);
+	transform-origin: bottom center;
+}
+.front {
+	transform: translateZ(50px);
+}
+
+.cube-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  background-color: $colorSecondary;
+  color: black;
+  font-size: 1.5rem;
+  padding: 4px 10px;
+	margin:6px;
+}

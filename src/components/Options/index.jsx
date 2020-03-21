@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles.scss';
 import OptionsButton from '../OptionsButton';
+import Cube from '../Cube';
 
 function Options(props) {
   return (

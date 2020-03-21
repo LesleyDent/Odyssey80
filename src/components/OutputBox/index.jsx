@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './styles.scss';
+import Typed from 'typed.js';
+// import TypeEffect from '../TypeEffect';
 
 export default class OutputBox extends Component {
   constructor(props) {
@@ -16,13 +18,16 @@ export default class OutputBox extends Component {
     })
   }
 
+
   // this.props.typeEffect(this.props.dialogue)
+
+
   render() {
     return (
       <div
         className={this.state.active ? 'output-box active' : 'output-box'}
       >
-        <p id="output" className="output-box__dialogue">{this.props.dialogue}</p>
+        <p id="output" className="output-box__dialogue">{this.props.parseMessage()}</p>
         <div className="output-box__controls">
           <button
             onClick={this.toggleActive}
@@ -35,3 +40,4 @@ export default class OutputBox extends Component {
     );
   }
 }
+// TypeEffect strings={this.props.dialogue} /

@@ -6,4 +6,20 @@
   font-size: 1.5rem;
   padding: 4px 10px;
   margin:6px;
+
+  &__text {
+    transform: rotateX(180deg);
+    color: black;
+
+    &:hover {
+      color: white;
+    }
+  }
+  
+  &:hover {
+    background-color: black;
+    color: $colorSecondary;
+    transform: rotateX(180deg);
+    transition: all .5s ease;
+  }
 }
