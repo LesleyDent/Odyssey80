@@ -154,10 +154,7 @@ export default class Main extends Component {
               currentPath = element;
             } else if (element.intent === 'surname') {
               currentPath = element;
-              console.log(currentPath)
-            } else if (this.state.input === 'maybe' && element.intent === 'maybe') {
-              //TODO Fix deep path issue
-              console.log('maybe')
+            } else if (element.intent === 'abort') {
               currentPath = element;
             }
           };
