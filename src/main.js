@@ -9,6 +9,7 @@ import MatrixEffect from './components/MatrixEffect';
 import BkgMusic from './components/BackgroundMusic';
 import IntensifyMusic from './components/IntensifyMusic';
 import Cube from './components/Cube';
+import PacmanGame from './components/Pacman';
 // // Initialize Firebase
 var firebaseConfig = {
   apiKey: "AIzaSyDvfM-1FFXlINCwrD7s-yxIvS3kGlVug-8",
@@ -34,14 +35,21 @@ export default class Main extends Component {
       memory: {},
       options: [],
       directory: 'dialogue/greeting',
-      // currentPaths: false,
       cue: {
         animation: false,
         music: false
       },
-      actions: {}
+      actions: {},
+      active: true,
     };
   };
+
+  toggleActive = () => {
+    this.setState({
+      ...this.state,
+      active: !this.state.active,
+    })
+  }
 
   // typeEffect = (text) => {
   //   if (this.state.outputEl) {
@@ -78,11 +86,21 @@ export default class Main extends Component {
   // how to get event.target.value without updating the value every time it inputs?
   // compare things against prevstate and only render when they change?..
 
+  // TODO:
+  // build out story:: evil overload ✅ evil rewire  evil decompress ; good overload  good rewire  good decompress
+  // pacman toggle active
+  // modals
+  // overload animations
+  // endgame screens
+  // type effect
+  // fix cube animation for buttons
+  // progress bar animation
+  // more fun games!
+  // create HELP and other random option responses
+  // pause music button
+
   submitInput = (event) => {
     event.preventDefault();
-    // display intro message
-    // TODO: if path is a ref, load ref
-    // TODO: create HELP and other random option responses
     if (this.state.input) {
       const data = this.getFirebaseData();
       this.updateGame(data);
@@ -257,12 +275,13 @@ export default class Main extends Component {
     return (
       <div className="main">
         <div className="main__container">
-          <OutputBox typeEffect={this.typeEffect} dialogue={this.state.dialogue} parseMessage={this.parseMessage} />
+          <OutputBox dialogue={this.state.dialogue} parseMessage={this.parseMessage} toggleActive={this.toggleActive} active={this.state.active} />
           <InputBox input={this.state.input} handleChange={this.handleChange} submitInput={this.submitInput} />
           {/* <Cube options={this.state.options} onOptionClick={this.onOptionClick} /> */}
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
         {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
+        {/* {this.state.cue.animation === 'pacman' ? <PacmanGame /> : null} */}
         {/* {this.state.cue.music === 'synth' ? <BkgMusic /> : null} */}
         {/* {this.state.cue.music === 'intensify' ? <IntensifyMusic /> : null} */}
         <div className="main__border-bottom"></div>
