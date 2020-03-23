@@ -25,7 +25,7 @@ p {
   color: white;
 }
 
-input, button {
+input {
   appearance: none;
   font-size: 2rem;
   border: 2px solid $colorSecondary;
@@ -35,5 +35,20 @@ input, button {
   padding: 5px 20px;
   outline: none;
   color: white;
-  background-color: black;
+  background: none;
+}
+
+button {
+  appearance: none;
+  font-size: 2rem;
+  background: none;
+  background-color: transparent;
+  margin: 10px;
+  padding: 5px 20px;
+  outline: none;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.5;
+  }
 }

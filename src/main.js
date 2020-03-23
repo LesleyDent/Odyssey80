@@ -6,10 +6,7 @@ import './main.scss';
 import './styles/partials/partials.scss';
 import Options from './components/Options';
 import MatrixEffect from './components/MatrixEffect';
-import BkgMusic from './components/BackgroundMusic';
-import IntensifyMusic from './components/IntensifyMusic';
-import Cube from './components/Cube';
-import PacmanGame from './components/Pacman';
+import Cube from "./components/Cube";
 // // Initialize Firebase
 var firebaseConfig = {
   apiKey: "AIzaSyDvfM-1FFXlINCwrD7s-yxIvS3kGlVug-8",
@@ -25,11 +22,118 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.database();
 
+const cubes = [
+  {
+    front: {
+      text: 'T',
+      style: 'blue',
+    },
+    back: {
+      text: 'O',
+      style: 'blue'
+    },
+    top: {
+      text: 'A',
+      style: 'yellow'
+    },
+    bottom: {
+      text: 'D',
+      style: 'yellow'
+    },
+    left: {
+      text: 'L',
+      style: 'pink'
+    },
+    right: {
+      text: 'R',
+      style: 'pink'
+    }
+  },
+  {
+    front: {
+      text: 'F',
+      style: 'blue',
+    },
+    back: {
+      text: 'B',
+      style: 'blue'
+    },
+    top: {
+      text: 'S',
+      style: 'yellow'
+    },
+    bottom: {
+      text: 'P',
+      style: 'yellow'
+    },
+    left: {
+      text: 'L',
+      style: 'pink'
+    },
+    right: {
+      text: 'Y',
+      style: 'pink'
+    }
+  },
+  {
+    front: {
+      text: 'C',
+      style: 'blue',
+    },
+    back: {
+      text: 'Y',
+      style: 'blue'
+    },
+    top: {
+      text: 'T',
+      style: 'yellow'
+    },
+    bottom: {
+      text: 'L',
+      style: 'yellow'
+    },
+    left: {
+      text: 'S',
+      style: 'pink'
+    },
+    right: {
+      text: 'G',
+      style: 'pink'
+    }
+  },
+  {
+    front: {
+      text: 'E',
+      style: 'blue',
+    },
+    back: {
+      text: 'B',
+      style: 'blue'
+    },
+    top: {
+      text: 'T',
+      style: 'yellow'
+    },
+    bottom: {
+      text: 'O',
+      style: 'yellow'
+    },
+    left: {
+      text: 'Y',
+      style: 'pink'
+    },
+    right: {
+      text: 'R',
+      style: 'pink'
+    }
+  }
+];
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
       dialogue: '',
+      currentPath: false,
       input: false,
       currentMemory: false,
       memory: {},
@@ -87,17 +191,15 @@ export default class Main extends Component {
   // compare things against prevstate and only render when they change?..
 
   // TODO:
-  // build out story:: evil overload ✅ evil rewire  evil decompress ; good overload  good rewire  good decompress
-  // pacman toggle active
+  // build out story:: evil overload ✅ evil rewire❓  evil decompress ; good overload  good rewire  good decompress
   // modals
-  // overload animations
+  // overload: poweroff continue to next level
   // endgame screens
-  // type effect
+
   // fix cube animation for buttons
   // progress bar animation
   // more fun games!
   // create HELP and other random option responses
-  // pause music button
 
   submitInput = (event) => {
     event.preventDefault();
@@ -112,20 +214,70 @@ export default class Main extends Component {
     return firebaseData;
   }
 
-  parseMessage = () => {
-    let message = this.state.dialogue;
-    if (message.indexOf('%%') > -1) {
-      let messageArray = message.split('%%');
-      let memory = messageArray[1].toLowerCase();
-      messageArray[1] = this.state.memory[memory];
-      return messageArray.join('');
+  parseMessage = (text = this.state.dialogue) => {
+    let message = text;
+    let messageArray;
+    let messageMap;
+    let options = {
+      strings: [],
+      typeSpeed: 60,
+      backSpeed: 25,
+      fadeOut: true,
+      smartBackspace: false,
+      backDelay: 0,
+      fadeOutDelay: 500,
     };
-    return message;
+    // break strings in those array pieces if they contain %% and replace with memory
+    // make sure they combine into array correctly
+
+    if (message.indexOf('@@') > -1) {
+      options.smartBackspace = true;
+      options.fadeOut = false;
+    }
+
+    // https://stackoverflow.com/a/32754249
+    var multiSplit = function (str, delimeters) {
+      var result = [str];
+      if (typeof (delimeters) == 'string')
+        delimeters = [delimeters];
+      while (delimeters.length > 0) {
+        for (var i = 0; i < result.length; i++) {
+          var tempSplit = result[i].split(delimeters[0]);
+          result = result.slice(0, i).concat(tempSplit).concat(result.slice(i + 1));
+        }
+        delimeters.shift();
+      }
+      return result;
+    }
+    messageArray = multiSplit(message, ['&&', '@@'])
+
+    messageMap = messageArray.map((element) => {
+      if (element.indexOf('%%') > -1) {
+        let elementArray = element.split('%%');
+        let memory = elementArray[1].toLowerCase();
+        elementArray[1] = this.state.memory[memory];
+        return elementArray.join('');
+      };
+      return element;
+    });
+    messageArray = messageMap;
+
+    options.strings = messageArray;
+
+    return options
   }
 
-  onOptionClick = (index) => {
-    let data = this.getFirebaseData(`${this.state.directory}/paths/${index}`);
+  onOptionClick = (path = false, index) => {
+    let data = this.getFirebaseData(path ? path : `${this.state.directory}/paths/${index}`);
     this.updateGame(data);
+  }
+
+  loadNext = (path, time = 0) => {
+    setTimeout(
+      () => {
+        let data = this.getFirebaseData(path);
+        this.updateGame(data);
+      }, time);
   }
 
   updateGame = (firebaseData) => {
@@ -150,21 +302,25 @@ export default class Main extends Component {
           } else {
             if (element.intent === 'intro') {
               currentPath = element;
-            } else if (noOptions.includes(this.state.input.toLowerCase()) && element.intent === 'no') {
+            } else if (this.state.input && noOptions.includes(this.state.input.toLowerCase()) && element.intent === 'no') {
               currentPath = element;
-            } else if (yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
+            } else if (this.state.input && yesOptions.includes(this.state.input.toLowerCase()) && element.intent === 'yes') {
               currentPath = element;
-            } else if (this.state.input.toLowerCase() === 'ready' && element.intent === 'yes') {
+            } else if (this.state.input && this.state.input.toLowerCase() === 'ready' && element.intent === 'yes') {
               currentPath = element;
-            } else if (this.state.input === 'ok' && element.intent === 'correct') {
+            } else if (this.state.input && this.state.input === 'ok' && element.intent === 'correct') {
               currentPath = element;
-            } else if (this.state.input !== 'ok' && element.intent === 'incorrect') {
+            } else if (this.state.input && this.state.input !== 'ok' && element.intent === 'incorrect') {
               currentPath = element;
-            } else if (this.state.input && element.intent === 'anything') {
+            } else if (this.state.input && this.state.input && element.intent === 'anything') {
               currentPath = element;
-            } else if (comboOptions.includes(this.state.input.toLowerCase()) && element.intent === 'goodCombo') {
+            } else if (this.state.input && comboOptions.includes(this.state.input.toLowerCase()) && element.intent === 'goodCombo') {
               currentPath = element;
-            } else if (!comboOptions.includes(this.state.input.toLowerCase()) && element.intent === 'badCombo') {
+            } else if (this.state.input && !comboOptions.includes(this.state.input.toLowerCase()) && element.intent === 'badCombo') {
+              currentPath = element;
+            } else if (this.state.input && this.state.input.toLowerCase() === 'odyssey' && element.intent === 'unscrambled') {
+              currentPath = element;
+            } else if (this.state.input && this.state.input.toLowerCase() !== 'odyssey' && element.intent === 'notunscrambled') {
               currentPath = element;
             } else if (element.intent === 'age') {
               currentPath = element;
@@ -206,6 +362,7 @@ export default class Main extends Component {
       const refValue = result.val();
       this.setState(prevState => ({
         ...this.state,
+        currentPath: refValue,
         dialogue: randomMsg ? refValue[randomMsg] : refValue.message,
         directory: currentPath.ref,
         input: false,
@@ -228,6 +385,7 @@ export default class Main extends Component {
     if (this.state.currentMemory) {
       this.setState(prevState => ({
         ...this.state,
+        currentPath: currentPath,
         dialogue: currentPath.message,
         directory: `${directory}/paths/${currentPathIndex}`,
         input: false,
@@ -246,12 +404,20 @@ export default class Main extends Component {
     }
   }
 
+  poweroff = (time = 0) => {
+    setTimeout(
+      () => {
+        this.toggleActive();
+      }, time);
+  }
+
   componentDidMount() {
     const dbRef = firebase.database().ref(this.state.directory);
     dbRef.on("value", (result) => {
       const storeResult = result.val()
       this.setState({
         ...this.state,
+        currentPath: storeResult,
         outputEl: document.querySelector('#output'),
         dialogue: storeResult.message,
         currentMemory: storeResult.remember,
@@ -271,20 +437,31 @@ export default class Main extends Component {
   }
 
   render() {
-
     return (
-      <div className="main">
+      <div className={['main', this.state.cue.animation === 'alarm' ? 'alarm' : '', this.state.cue.animation === 'flippedbuttons' ? 'flippedbuttons' : '', this.state.active ? 'active' : ''].join(' ')} >
         <div className="main__container">
-          <OutputBox dialogue={this.state.dialogue} parseMessage={this.parseMessage} toggleActive={this.toggleActive} active={this.state.active} />
-          <InputBox input={this.state.input} handleChange={this.handleChange} submitInput={this.submitInput} />
-          {/* <Cube options={this.state.options} onOptionClick={this.onOptionClick} /> */}
+          <OutputBox
+            dialogue={this.state.dialogue}
+            parseMessage={this.parseMessage}
+            toggleActive={this.toggleActive}
+            active={this.state.active}
+            cue={this.state.cue}
+            loadNext={this.loadNext}
+            directory={this.state.directory}
+          />
+          <InputBox
+            input={this.state.input}
+            handleChange={this.handleChange}
+            submitInput={this.submitInput}
+            options={this.state.options.length ? true : false}
+            active={this.state.active}
+          />
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
         {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
-        {/* {this.state.cue.animation === 'pacman' ? <PacmanGame /> : null} */}
-        {/* {this.state.cue.music === 'synth' ? <BkgMusic /> : null} */}
-        {/* {this.state.cue.music === 'intensify' ? <IntensifyMusic /> : null} */}
+        {this.state.cue.animation === 'cubes' ? <div className="cubes">{cubes.map((cube, index) => <Cube key={`cube-${index}`} cube={cube} index={index} />)}</div> : null}
         <div className="main__border-bottom"></div>
+        {this.state.active && this.state.cue.animation === 'poweroff' ? this.poweroff(40000) : ''}
       </div>
     );
   };

@@ -2,53 +2,36 @@ import React, { Component } from 'react';
 // import './styles.scss';
 import Typed from 'typed.js';
 
-// function TypeEffect(element, speed) {
-//   let text = element.innerHTML;
-//   element.innerHTML = "";
+export default class TypeEffect extends Component {
+  constructor(props) {
+    super(props);
+  };
 
-//   let i = 0;
-//   let timer = setInterval(function () {
-//     if (i < text.length) {
-//       element.append(text.charAt(i));
-//       i++;
-//     } else {
-//       clearInterval(timer);
-//     }
-//   }, speed);
-// }
+  componentDidMount() {
+    const parsedOptions = this.props.parseMessage();
+    this.typed = new Typed(this.el, parsedOptions);
+  }
 
-// let speed = 75;
-// let delay = text.length * speed + speed;
+  componentDidUpdate(prevProps) {
+    if (prevProps.dialogue !== this.props.dialogue) {
+      this.typed.destroy();
+      const parsedOptions = this.props.parseMessage();
+      this.typed = new Typed(this.el, parsedOptions);
+    }
+  }
 
-// setTimeout(function () {
-//   TypeEffect(msg, speed);
-// }, delay);
+  componentWillUnmount() {
+    if (this.typed) {
+      this.typed.destroy();
+    }
+  }
 
-
-// export default TypeEffect
-
-// export default class TypeEffect extends Component {
-//   componentDidMount() {
-//     // If you want to pass more options as props, simply add
-//     // your desired props to this destructuring assignment.
-//     const { strings } = this.props;
-//     // You can pass other options here, such as typing speed, back speed, etc.
-//     const options = {
-//       strings: strings,
-//       typeSpeed: 50,
-//       backSpeed: 50
-//     };
-//     // this.el refers to the <span> in the render() method
-//     this.typed = new Typed(this.el, options);
-//   }
-
-//   // componentWillUnmount() {
-//   //   this.typed.destroy();
-//   // }
-
-//   render() {
-//     return (
-//       <></>
-//     );
-//   }
-// }
+  render() {
+    return (
+      <span
+        style={{ whiteSpace: 'pre-line' }}
+        ref={(el) => { this.el = el; }}
+      />
+    );
+  }
+}

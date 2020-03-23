@@ -13,6 +13,7 @@ function InputBox(props) {
         onChange={(event) => { props.handleChange(event) }}
         autoComplete="off"
         autoFocus
+        disabled={props.options || !props.active}
       />
       <button className="inputbox__button"
         type="submit"

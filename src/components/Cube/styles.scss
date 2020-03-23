@@ -1,62 +1,122 @@
 @import '../../styles/partials/partials.scss';
 
-.wrap {
-	perspective: 800px;
-	perspective-origin: 50% 100px;
-	display: flex;
-	position: absolute;
-	top: 530px;
-	left: 50px;
-}
-
-.cube {
-	display: flex;
-	position: relative;
-	width: 200px;
-  transform-style: preserve-3d;
-  font-family: Quantico;
-  color: white;
-  animation: spin 5s infinite linear;
-  text-align: center;
-}
-
-.cube div {
+.cubes {
+	display: block;
   position: absolute;
-	width: 100px;
-	height: 100px;
-  box-shadow: 0 0 10px $colorPrimary, inset 0 0 40px rgba(25, 203, 243, 0.568);
+  bottom: 200px;
+  left: 50%;
+  width: 530px;
+  transform: translateX(-50%);
 }
 
-.back {
-	transform: translateZ(-50px) rotateY(180deg);
-}
-.right {
-	transform: rotateY(-270deg) translateX(50px);
-	transform-origin: top right;
-}
-.left {
-	transform: rotateY(270deg) translateX(-50px);
-	transform-origin: center left;
-}
-.top {
-	transform: rotateX(-90deg) translateY(-50px);
-	transform-origin: top center;
-}
-.bottom {
-	transform: rotateX(90deg) translateY(50px);
-	transform-origin: bottom center;
-}
-.front {
-	transform: translateZ(50px);
-}
+	.cube {
+    animation: spincube 8s infinite ease-in-out;
+    transform-style: preserve-3d;
+    transform-origin: 40px 40px 0;
 
-.cube-button {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-  background-color: $colorSecondary;
-  color: black;
-  font-size: 1.5rem;
-  padding: 4px 10px;
-	margin:6px;
-}
+    &__text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: auto;
+      height: 25px;
+      width: 25px;
+      border-radius: 50%;
+      color: black;
+
+      &--blue {
+        box-shadow: 0 0 5px $colorPrimary, inset 0 0 40px rgba($colorPrimary, .95);
+        // color: rgba(200, 242, 253, 0.925);
+        // background-color: rgba(25, 203, 243, 1);
+      }
+
+      &--pink {
+        box-shadow: 0 0 5px $colorSecondary, inset 0 0 40px rgba($colorSecondary, .95);
+        // color: rgba(238, 200, 253, 0.925);
+        // background-color: rgba(199, 25, 243, 1);
+      }
+
+      &--yellow {
+        box-shadow: 0 0 5px #e5ff00, inset 0 0 40px rgba(#e5ff00, .95);
+        // color: rgba(245, 253, 200, 0.925);
+        // background-color: rgba(243, 228, 25, 1);
+      }
+    }
+
+    &__face {
+      display:flex;
+      position: absolute;
+			width: 80px;
+			height: 80px;
+			line-height: 80px;
+			text-align: center;
+			font-size: 15px;
+
+      &--blue {
+        box-shadow: 0 0 5px $colorPrimary, inset 0 0 40px rgba($colorPrimary, 0.3);
+        text-shadow: 0 0 8px #00b7ff;
+        color: rgba(200, 242, 253, 0.925);
+        // background-color: rgba(25, 203, 243, 0.568);
+      }
+
+      &--pink {
+        box-shadow: 0 0 5px $colorSecondary, inset 0 0 40px rgba($colorSecondary, 0.3);
+        text-shadow: 0 0 8px #f700ff;
+        color: rgba(238, 200, 253, 0.925);
+        // background-color: rgba(199, 25, 243, 0.568);
+      }
+
+      &--yellow {
+        box-shadow: 0 0 5px #e5ff00, inset 0 0 40px rgba(#e5ff00, 0.3);
+        text-shadow: 0 0 8px #ffee00; 
+        color: rgba(245, 253, 200, 0.925);
+        // background-color: rgba(243, 228, 25, 0.568);
+      }
+
+      &--front {
+        transform: translateZ(40px);
+      }
+      &--bottom {
+        transform: rotateY(90deg) translateZ(40px);
+      }
+      &--left {
+        transform: rotateY(90deg) rotateX(90deg) translateZ(40px);
+      }
+      &--back {
+        transform: rotateY(180deg) rotateZ(90deg) translateZ(40px);
+      }
+      &--top {
+        transform: rotateY(-90deg) rotateZ(90deg) translateZ(40px);
+      }
+      &--right {
+        transform: rotateX(-90deg) translateZ(40px);
+      }
+    }
+
+    &--0 {
+      animation-delay: -1s;
+      position: relative;
+      left: -100px;
+    }
+
+    &--1 {
+      animation-delay: -2.5s;
+      animation-duration: 9s;
+      position: relative;
+      left: 100px;
+    }
+
+    &--2 {
+      animation-delay: -4;
+      animation-duration: 7s;
+      position: relative;
+      left: 325px;
+    }
+
+    &--3 {
+      animation-delay: -6s;
+      animation-duration: 10s;
+      position: relative;
+      left: 550px;
+    }
+	}

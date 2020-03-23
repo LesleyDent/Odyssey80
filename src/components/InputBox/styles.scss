@@ -3,7 +3,13 @@
 .inputbox {
   width: 530px;
   transform: perspective(10em) rotateX(35deg);
+  transition: all 1s ease;
   &__button {
     display: none;
+  }
+
+  &:disabled {
+    opacity: 0.2;
+
   }
 }
