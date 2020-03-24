@@ -26,20 +26,14 @@
 
       &--blue {
         box-shadow: 0 0 5px $colorPrimary, inset 0 0 40px rgba($colorPrimary, .95);
-        // color: rgba(200, 242, 253, 0.925);
-        // background-color: rgba(25, 203, 243, 1);
       }
 
       &--pink {
         box-shadow: 0 0 5px $colorSecondary, inset 0 0 40px rgba($colorSecondary, .95);
-        // color: rgba(238, 200, 253, 0.925);
-        // background-color: rgba(199, 25, 243, 1);
       }
 
       &--yellow {
         box-shadow: 0 0 5px #e5ff00, inset 0 0 40px rgba(#e5ff00, .95);
-        // color: rgba(245, 253, 200, 0.925);
-        // background-color: rgba(243, 228, 25, 1);
       }
     }
 
@@ -56,21 +50,18 @@
         box-shadow: 0 0 5px $colorPrimary, inset 0 0 40px rgba($colorPrimary, 0.3);
         text-shadow: 0 0 8px #00b7ff;
         color: rgba(200, 242, 253, 0.925);
-        // background-color: rgba(25, 203, 243, 0.568);
       }
 
       &--pink {
         box-shadow: 0 0 5px $colorSecondary, inset 0 0 40px rgba($colorSecondary, 0.3);
         text-shadow: 0 0 8px #f700ff;
         color: rgba(238, 200, 253, 0.925);
-        // background-color: rgba(199, 25, 243, 0.568);
       }
 
       &--yellow {
         box-shadow: 0 0 5px #e5ff00, inset 0 0 40px rgba(#e5ff00, 0.3);
         text-shadow: 0 0 8px #ffee00; 
         color: rgba(245, 253, 200, 0.925);
-        // background-color: rgba(243, 228, 25, 0.568);
       }
 
       &--front {

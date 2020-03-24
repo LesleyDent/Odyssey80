@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-// import './styles.scss';
 import Typed from 'typed.js';
 
 export default class TypeEffect extends Component {
-  constructor(props) {
-    super(props);
-  };
 
   componentDidMount() {
     const parsedOptions = this.props.parseMessage();

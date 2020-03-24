@@ -5,16 +5,12 @@ import './styles.scss';
 
 
 class WaveLottie extends Component {
-  constructor(props) {
-    super(props);
-  };
 
   componentDidMount() {
     if (this.props.loadNext && this.props.directory) {
       this.props.loadNext(`${this.props.directory}/paths/0`, 5000);
     }
   }
-
 
   render() {
     const defaultOptions = {

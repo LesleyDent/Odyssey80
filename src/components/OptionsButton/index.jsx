@@ -1,6 +1,5 @@
 import React from 'react';
 import './styles.scss';
-import UncontrolledLottie from '../../components/UncontrolledLottie';
 
 function OptionsButton(props) {
   return (

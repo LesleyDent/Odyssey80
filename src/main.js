@@ -7,6 +7,10 @@ import './styles/partials/partials.scss';
 import Options from './components/Options';
 import MatrixEffect from './components/MatrixEffect';
 import Cube from "./components/Cube";
+import AlarmMusic from './components/AlarmMusic';
+import WinMusic from './components/WinMusic';
+// import RetryButton from './components/RetryButton';
+
 // // Initialize Firebase
 var firebaseConfig = {
   apiKey: "AIzaSyDvfM-1FFXlINCwrD7s-yxIvS3kGlVug-8",
@@ -169,16 +173,6 @@ export default class Main extends Component {
     );
   };
 
-  // TODO:
-  // build out story:: evil overload ✅ evil rewire❓  evil decompress ; good overload  good rewire  good decompress
-  // modals
-  // overload: poweroff continue to next level
-  // endgame screens
-
-  // progress bar animation
-  // more fun games!
-  // create HELP and other random option responses
-
   submitInput = (event) => {
     event.preventDefault();
     if (this.state.input) {
@@ -211,7 +205,6 @@ export default class Main extends Component {
       options.fadeOut = false;
     }
 
-    // https://stackoverflow.com/a/32754249
     var multiSplit = function (str, delimeters) {
       var result = [str];
       if (typeof (delimeters) == 'string')
@@ -236,9 +229,6 @@ export default class Main extends Component {
           }
           return piece
         })
-        console.log('ELARRAY', elementArray, 'ELARRMEM', elementArrayMemory)
-        // let memory = elementArray[index].toLowerCase();
-        // elementArray[index] = this.state.memory[memory];
         return elementArrayMemory.join('');
       };
       return element;
@@ -256,6 +246,7 @@ export default class Main extends Component {
   }
 
   loadNext = (path, time = 0) => {
+    console.log('LOAD NEXT', path, time)
     setTimeout(
       () => {
         let data = this.getFirebaseData(path);
@@ -393,6 +384,9 @@ export default class Main extends Component {
       () => {
         this.toggleActive();
       }, time);
+    // return (
+    //   <RetryButton loadNext={this.loadNext} />
+    // )
   }
 
   componentDidMount() {
@@ -442,11 +436,12 @@ export default class Main extends Component {
           />
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
-        {this.state.cue.music === 'pacmanmusic' ? <PacmanSound /> : null}
+        {this.state.cue.music === 'winmusic' ? <WinMusic /> : null}
+        {this.state.cue.music === 'alarm' ? <AlarmMusic /> : null}
         {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
         {this.state.cue.animation === 'cubes' ? <div className="cubes">{cubes.map((cube, index) => <Cube key={`cube-${index}`} cube={cube} index={index} />)}</div> : null}
         <div className="main__border-bottom"></div>
-        {this.state.active && this.state.cue.animation === 'poweroff' ? this.poweroff(40000) : ''}
+        {this.state.active && this.state.cue.animation === 'poweroff' ? this.poweroff(70000) : ''}
         {this.state.active && this.state.cue.animation === 'alarmthenpoweroff' ? this.poweroff(8000) : ''}
       </div>
     );

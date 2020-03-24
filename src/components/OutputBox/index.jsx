@@ -6,9 +6,6 @@ import WaveLottie from '../WaveLottie';
 import TypeEffect from '../TypeEffect';
 
 export default class OutputBox extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     return (
@@ -20,7 +17,6 @@ export default class OutputBox extends Component {
         ].join(' ')}
       >
         {this.props.cue.animation === 'pacman' ?
-          <PacmanSound music={this.props.cue.music} /> &&
           <PacmanGame
             loadNext={this.props.loadNext}
             directory={this.props.directory}

@@ -1,0 +1,86 @@
+@import '../../styles/partials/partials.scss';
+
+.options-button {
+  display: flex;
+  font-size: 1.5rem;
+  margin:6px;
+  border: none;
+  position: relative;
+  z-index: 1;
+
+  &__text {
+    color: black;
+    transform: rotateX(0deg);
+    transition: all 1s ease;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $colorSecondary;
+    border: 2px solid $colorSecondary;
+    border-radius: 5px;
+    transform: rotateX(180deg);
+    transition: all .5s ease;
+    margin: -2px;
+    z-index:-1;
+  }
+  
+  &:hover {
+    color: $colorSecondary;
+    
+
+    .options-button__text {
+      color: white;
+      transform: rotateX(360deg);
+    }
+
+    &::after {
+      transform: rotateX(0);
+      background-color:transparent;
+    }
+  }
+}
+
+.options-button2 {
+  color: white;
+  border: none;
+  margin: 8px;
+  padding: 0;
+
+  p {
+    cursor: pointer;
+    color: yellow;
+    font-size: 2rem;
+    margin: 0;
+    padding: 2px 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    transition: color .1s ease, background-color .5s ease, border-color 0s ease;
+  }
+
+  &:hover {
+    p {
+      background-color: rgba(255, 255, 0, 0.185);
+      color: yellow;
+      border-color: yellow;
+    }
+  }
+
+  .active.alarm & {
+    p {
+      color: red;
+      animation: shaking .6s infinite;
+    }
+    &:hover {
+    p {
+        background-color: rgba(255, 0, 0, 0.185);
+        border-color: red;
+      }
+    }
+  }
+}
