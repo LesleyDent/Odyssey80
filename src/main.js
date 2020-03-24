@@ -442,6 +442,7 @@ export default class Main extends Component {
           />
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
+        {this.state.cue.music === 'pacmanmusic' ? <PacmanSound /> : null}
         {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
         {this.state.cue.animation === 'cubes' ? <div className="cubes">{cubes.map((cube, index) => <Cube key={`cube-${index}`} cube={cube} index={index} />)}</div> : null}
         <div className="main__border-bottom"></div>

@@ -20,15 +20,19 @@ export default class OutputBox extends Component {
         ].join(' ')}
       >
         {this.props.cue.animation === 'pacman' ?
+          <PacmanSound music={this.props.cue.music} /> &&
           <PacmanGame
             loadNext={this.props.loadNext}
             directory={this.props.directory}
-          /> : this.props.cue.animation === "rewire" ?
+          />
+
+          : this.props.cue.animation === "rewire" ?
             <div className="output-box__wires-text"><WaveLottie
               directory={this.props.directory}
               loadNext={this.props.loadNext}
             />
               <p id="output" className="output-box__dialogue">{<TypeEffect parseMessage={this.props.parseMessage} dialogue={this.props.dialogue} />}</p></div>
+
             :
             <>
               {
