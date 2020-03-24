@@ -29,7 +29,7 @@ const cubes = [
       style: 'blue',
     },
     back: {
-      text: 'O',
+      text: 'D',
       style: 'blue'
     },
     top: {
@@ -37,7 +37,7 @@ const cubes = [
       style: 'yellow'
     },
     bottom: {
-      text: 'D',
+      text: 'S',
       style: 'yellow'
     },
     left: {
@@ -45,7 +45,7 @@ const cubes = [
       style: 'pink'
     },
     right: {
-      text: 'R',
+      text: 'M',
       style: 'pink'
     }
   },
@@ -55,7 +55,7 @@ const cubes = [
       style: 'blue',
     },
     back: {
-      text: 'B',
+      text: 'H',
       style: 'blue'
     },
     top: {
@@ -81,7 +81,7 @@ const cubes = [
       style: 'blue',
     },
     back: {
-      text: 'Y',
+      text: 'E',
       style: 'blue'
     },
     top: {
@@ -93,7 +93,7 @@ const cubes = [
       style: 'yellow'
     },
     left: {
-      text: 'S',
+      text: 'Y',
       style: 'pink'
     },
     right: {
@@ -103,7 +103,7 @@ const cubes = [
   },
   {
     front: {
-      text: 'E',
+      text: 'Y',
       style: 'blue',
     },
     back: {
@@ -119,7 +119,7 @@ const cubes = [
       style: 'yellow'
     },
     left: {
-      text: 'Y',
+      text: 'O',
       style: 'pink'
     },
     right: {
@@ -155,25 +155,6 @@ export default class Main extends Component {
     })
   }
 
-  // typeEffect = (text) => {
-  //   if (this.state.outputEl) {
-  //     const element = document.querySelector('#output');
-  //     console.log("TEXT EFFECT", element)
-  //     let speed = 75;
-  //     element.textContent = "";
-
-  //     let i = 0;
-  //     let timer = setInterval(() => {
-  //       if (i < text.length) {
-  //         this.state.outputEl.append(text.charAt(i));
-  //         i++;
-  //       } else {
-  //         clearInterval(timer);
-  //       }
-  //     }, speed);
-  //   }
-  // }
-
   handleInputChange = (inputValue) => {
     this.setState({
       ...this.state,
@@ -187,8 +168,6 @@ export default class Main extends Component {
       event.target.value
     );
   };
-  // how to get event.target.value without updating the value every time it inputs?
-  // compare things against prevstate and only render when they change?..
 
   // TODO:
   // build out story:: evil overload ✅ evil rewire❓  evil decompress ; good overload  good rewire  good decompress
@@ -196,7 +175,6 @@ export default class Main extends Component {
   // overload: poweroff continue to next level
   // endgame screens
 
-  // fix cube animation for buttons
   // progress bar animation
   // more fun games!
   // create HELP and other random option responses
@@ -227,8 +205,6 @@ export default class Main extends Component {
       backDelay: 0,
       fadeOutDelay: 500,
     };
-    // break strings in those array pieces if they contain %% and replace with memory
-    // make sure they combine into array correctly
 
     if (message.indexOf('@@') > -1) {
       options.smartBackspace = true;
@@ -254,9 +230,16 @@ export default class Main extends Component {
     messageMap = messageArray.map((element) => {
       if (element.indexOf('%%') > -1) {
         let elementArray = element.split('%%');
-        let memory = elementArray[1].toLowerCase();
-        elementArray[1] = this.state.memory[memory];
-        return elementArray.join('');
+        let elementArrayMemory = elementArray.map((piece) => {
+          if (this.state.memory[piece]) {
+            return this.state.memory[piece]
+          }
+          return piece
+        })
+        console.log('ELARRAY', elementArray, 'ELARRMEM', elementArrayMemory)
+        // let memory = elementArray[index].toLowerCase();
+        // elementArray[index] = this.state.memory[memory];
+        return elementArrayMemory.join('');
       };
       return element;
     });
@@ -292,9 +275,10 @@ export default class Main extends Component {
 
       if (paths) {
         paths.forEach((element, index) => {
-          let noOptions = ['no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no', 'no can do', 'nope', 'no chance', 'like hell'];
-          let yesOptions = ['yes', 'yep', 'yip', 'yup', 'sure thing', 'ya bud', 'ya', 'yah', 'yeah', 'ye', 'ok', 'k', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes', 'most definitely', 'k']
+          let noOptions = ['n', 'no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no', 'no can do', 'nope', 'no chance', 'like hell', 'as if'];
+          let yesOptions = ['y', 'yes', 'yep', 'yip', 'yup', 'sure thing', 'ya bud', 'ya', 'yah', 'yeah', 'ye', 'ok', 'k', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes', 'most definitely']
           let comboOptions = ['2457', '2475', '2547', '2574', '2745', '2754', '4257', '4275', '4527', '4572', '4725', '4752', '5247', '5274', '5427', '5472', '5724', '5742', '7245', '7254', '7425', '7452', '7524', '7542'];
+          let colorOptions = ['blue', 'green', 'brown', 'hazel', 'black', 'dark brown', 'light brown', 'blue green', 'red']
 
           if (!element.intent) {
             currentPathIndex = index;
@@ -308,9 +292,9 @@ export default class Main extends Component {
               currentPath = element;
             } else if (this.state.input && this.state.input.toLowerCase() === 'ready' && element.intent === 'yes') {
               currentPath = element;
-            } else if (this.state.input && this.state.input === 'ok' && element.intent === 'correct') {
+            } else if (this.state.input && this.state.input === 'M4&f2e9' && element.intent === 'correct') {
               currentPath = element;
-            } else if (this.state.input && this.state.input !== 'ok' && element.intent === 'incorrect') {
+            } else if (this.state.input && this.state.input !== 'M4&f2e9' && element.intent === 'incorrect') {
               currentPath = element;
             } else if (this.state.input && this.state.input && element.intent === 'anything') {
               currentPath = element;
@@ -322,9 +306,9 @@ export default class Main extends Component {
               currentPath = element;
             } else if (this.state.input && this.state.input.toLowerCase() !== 'odyssey' && element.intent === 'notunscrambled') {
               currentPath = element;
-            } else if (element.intent === 'age') {
+            } else if (this.state.input && isNaN(this.state.input) === false && element.intent === 'age') {
               currentPath = element;
-            } else if (element.intent === 'eyeColor') {
+            } else if (this.state.input && colorOptions.includes(this.state.input.toLowerCase()) && element.intent === 'eyeColor') {
               currentPath = element;
             } else if (element.intent === 'surname') {
               currentPath = element;
@@ -438,7 +422,7 @@ export default class Main extends Component {
 
   render() {
     return (
-      <div className={['main', this.state.cue.animation === 'alarm' ? 'alarm' : '', this.state.cue.animation === 'flippedbuttons' ? 'flippedbuttons' : '', this.state.active ? 'active' : ''].join(' ')} >
+      <div className={['main', this.state.cue.animation === 'alarm' || this.state.cue.animation === 'alarmthenpoweroff' ? 'alarm' : '', this.state.cue.animation === 'flippedbuttons' ? 'flippedbuttons' : '', this.state.active ? 'active' : ''].join(' ')} >
         <div className="main__container">
           <OutputBox
             dialogue={this.state.dialogue}
@@ -462,6 +446,7 @@ export default class Main extends Component {
         {this.state.cue.animation === 'cubes' ? <div className="cubes">{cubes.map((cube, index) => <Cube key={`cube-${index}`} cube={cube} index={index} />)}</div> : null}
         <div className="main__border-bottom"></div>
         {this.state.active && this.state.cue.animation === 'poweroff' ? this.poweroff(40000) : ''}
+        {this.state.active && this.state.cue.animation === 'alarmthenpoweroff' ? this.poweroff(8000) : ''}
       </div>
     );
   };
