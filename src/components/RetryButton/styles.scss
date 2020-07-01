@@ -1,50 +1,50 @@
 @import '../../styles/partials/partials.scss';
 
-.options-button {
-  display: flex;
-  font-size: 1.5rem;
-  margin:6px;
-  border: none;
-  position: relative;
-  z-index: 1;
+// .options-button {
+//   display: flex;
+//   font-size: 1.5rem;
+//   margin:6px;
+//   border: none;
+//   position: relative;
+//   z-index: 1;
 
-  &__text {
-    color: black;
-    transform: rotateX(0deg);
-    transition: all 1s ease;
-  }
+//   &__text {
+//     color: black;
+//     transform: rotateX(0deg);
+//     transition: all 1s ease;
+//   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: $colorSecondary;
-    border: 2px solid $colorSecondary;
-    border-radius: 5px;
-    transform: rotateX(180deg);
-    transition: all .5s ease;
-    margin: -2px;
-    z-index:-1;
-  }
+//   &::after {
+//     content: '';
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     right: 0;
+//     bottom: 0;
+//     background-color: $colorSecondary;
+//     border: 2px solid $colorSecondary;
+//     border-radius: 5px;
+//     transform: rotateX(180deg);
+//     transition: all .5s ease;
+//     margin: -2px;
+//     z-index:-1;
+//   }
   
-  &:hover {
-    color: $colorSecondary;
+//   &:hover {
+//     color: $colorSecondary;
     
 
-    .options-button__text {
-      color: white;
-      transform: rotateX(360deg);
-    }
+//     .options-button__text {
+//       color: white;
+//       transform: rotateX(360deg);
+//     }
 
-    &::after {
-      transform: rotateX(0);
-      background-color:transparent;
-    }
-  }
-}
+//     &::after {
+//       transform: rotateX(0);
+//       background-color:transparent;
+//     }
+//   }
+// }
 
 .options-button2 {
   color: white;

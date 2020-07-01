@@ -4,7 +4,7 @@ import './styles.scss';
 function RetryButton(props) {
   return (
     <button onClick={() => { props.loadNext(path) }} className="retry-button2">
-      <p className="retry-button__text">{props.text}</p>
+      <p className="retry-button__text">Retry</p>
     </button>
   );
 };

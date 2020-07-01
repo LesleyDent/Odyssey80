@@ -267,9 +267,9 @@ export default class Main extends Component {
       if (paths) {
         paths.forEach((element, index) => {
           let noOptions = ['n', 'no', 'nah', 'no way', 'never', "i don't think so", 'sorry', 'ne pas', 'hell no', 'no can do', 'nope', 'no chance', 'like hell', 'as if'];
-          let yesOptions = ['y', 'yes', 'yep', 'yip', 'yup', 'sure thing', 'ya bud', 'ya', 'yah', 'yeah', 'ye', 'ok', 'k', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes', 'most definitely']
+          let yesOptions = ['y', 'yes', 'yep', 'yip', 'yup', 'sure thing', 'ya bud', 'ya', 'yah', 'yeah', 'ye', 'ok', 'k', 'okidoki', 'sure', 'for sure', 'uh huh', 'alright', 'aiight', 'why not', 'may as well', 'absolutely', 'sure thing', 'heck yes', 'most definitely', 'of course']
           let comboOptions = ['2457', '2475', '2547', '2574', '2745', '2754', '4257', '4275', '4527', '4572', '4725', '4752', '5247', '5274', '5427', '5472', '5724', '5742', '7245', '7254', '7425', '7452', '7524', '7542'];
-          let colorOptions = ['blue', 'green', 'brown', 'hazel', 'black', 'dark brown', 'light brown', 'blue green', 'red']
+          let colorOptions = ['blue', 'green', 'brown', 'hazel', 'black', 'dark brown', 'light brown', 'blue green', 'red', 'grey', 'gray']
 
           if (!element.intent) {
             currentPathIndex = index;
@@ -436,8 +436,6 @@ export default class Main extends Component {
           />
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
-        {this.state.cue.music === 'winmusic' ? <WinMusic /> : null}
-        {this.state.cue.music === 'alarm' ? <AlarmMusic /> : null}
         {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
         {this.state.cue.animation === 'cubes' ? <div className="cubes">{cubes.map((cube, index) => <Cube key={`cube-${index}`} cube={cube} index={index} />)}</div> : null}
         <div className="main__border-bottom"></div>

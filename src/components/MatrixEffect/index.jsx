@@ -41,7 +41,7 @@ class MatrixEffect extends Component {
     return (
       <div>
         <canvas ref="canvas" />
-        <img ref="image" className="hidden" alt="animation of foreign symbols and numbers falling like rain" />
+        <img ref="image" className="hidden" />
       </div>
     )
   }
