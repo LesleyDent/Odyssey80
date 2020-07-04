@@ -7,8 +7,7 @@ import './styles/partials/partials.scss';
 import Options from './components/Options';
 import MatrixEffect from './components/MatrixEffect';
 import Cube from "./components/Cube";
-import AlarmMusic from './components/AlarmMusic';
-import WinMusic from './components/WinMusic';
+import Credits from './components/Credits';
 // import RetryButton from './components/RetryButton';
 
 // // Initialize Firebase
@@ -303,6 +302,8 @@ export default class Main extends Component {
               currentPath = element;
             } else if (element.intent === 'surname') {
               currentPath = element;
+            } else if (element.intent === 'location') {
+              currentPath = element;
             } else if (element.intent === 'abort') {
               currentPath = element;
             }
@@ -416,7 +417,7 @@ export default class Main extends Component {
 
   render() {
     return (
-      <div className={['main', this.state.cue.animation === 'alarm' || this.state.cue.animation === 'alarmthenpoweroff' ? 'alarm' : '', this.state.cue.animation === 'flippedbuttons' ? 'flippedbuttons' : '', this.state.active ? 'active' : ''].join(' ')} >
+      <div className={['main', this.state.cue.animation === 'alarm' || this.state.cue.animation === 'alarmthenpoweroff' || this.state.cue.animation === 'alarmthenpoweroff2' ? 'alarm' : '', this.state.cue.animation === 'flippedbuttons' ? 'flippedbuttons' : '', this.state.active ? 'active' : ''].join(' ')} >
         <div className="main__container">
           <OutputBox
             dialogue={this.state.dialogue}
@@ -436,10 +437,13 @@ export default class Main extends Component {
           />
           <Options options={this.state.options} onOptionClick={this.onOptionClick} />
         </div>
+        {this.state.cue.animation === 'credits' ? <Credits /> : null}
         {this.state.cue.animation === 'matrix' ? <MatrixEffect /> : null}
         {this.state.cue.animation === 'cubes' ? <div className="cubes">{cubes.map((cube, index) => <Cube key={`cube-${index}`} cube={cube} index={index} />)}</div> : null}
         <div className="main__border-bottom"></div>
         {this.state.active && this.state.cue.animation === 'poweroff' ? this.poweroff(70000) : ''}
+        {this.state.active && this.state.cue.animation === 'poweroff2' ? this.poweroff(5000) : ''}
+        {this.state.active && this.state.cue.animation === 'alarmthenpoweroff' ? this.poweroff(70000) : ''}
         {this.state.active && this.state.cue.animation === 'alarmthenpoweroff' ? this.poweroff(8000) : ''}
       </div>
     );
