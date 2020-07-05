@@ -417,7 +417,7 @@ export default class Main extends Component {
 
   render() {
     return (
-      <div className={['main', this.state.cue.animation === 'alarm' || this.state.cue.animation === 'alarmthenpoweroff' || this.state.cue.animation === 'alarmthenpoweroff2' ? 'alarm' : '', this.state.cue.animation === 'flippedbuttons' ? 'flippedbuttons' : '', this.state.active ? 'active' : ''].join(' ')} >
+      <div className={['main', this.state.cue.animation === 'alarm' || this.state.cue.animation === 'alarmthenpoweroff' ? 'alarm' : '', this.state.cue.animation === 'flippedbuttons' ? 'flippedbuttons' : '', this.state.active ? 'active' : ''].join(' ')} >
         <div className="main__container">
           <OutputBox
             dialogue={this.state.dialogue}
@@ -443,8 +443,7 @@ export default class Main extends Component {
         <div className="main__border-bottom"></div>
         {this.state.active && this.state.cue.animation === 'poweroff' ? this.poweroff(70000) : ''}
         {this.state.active && this.state.cue.animation === 'poweroff2' ? this.poweroff(5000) : ''}
-        {this.state.active && this.state.cue.animation === 'alarmthenpoweroff' ? this.poweroff(70000) : ''}
-        {this.state.active && this.state.cue.animation === 'alarmthenpoweroff' ? this.poweroff(8000) : ''}
+        {this.state.active && this.state.cue.animation === 'alarmthenpoweroff' ? this.poweroff(35000) : ''}
       </div>
     );
   };
